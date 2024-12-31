@@ -1,5 +1,6 @@
 # App
-GymPass style app.
+GymPass style app developed with NodeJs using SOLID.
+
 ## RFs (Requisitos funcionais)
 - [ ] Deve ser possível se cadastrar;
 - [ ] Deve ser possível se autenticar;
