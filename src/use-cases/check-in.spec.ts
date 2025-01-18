@@ -3,19 +3,21 @@ import { InMemoryGymsRepository } from "@/repositories/in-memory/in-memory-gyms-
 import { Prisma } from "@prisma/client"
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { CheckInUseCase } from "./check-in"
+import { MaxDistanceError } from "./errors/max-distance-error"
+import { MaxNumberOfCheckInsError } from "./errors/max-number-of-check-ins-error"
 
 let checkInsRepository: InMemoryCheckInsRepository
 let gymsRepository: InMemoryGymsRepository
 let sut: CheckInUseCase
 
 describe('Check-in Use Case', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     checkInsRepository = new InMemoryCheckInsRepository()
     gymsRepository = new InMemoryGymsRepository()
     sut = new CheckInUseCase(checkInsRepository, gymsRepository)
     // const num = new Prisma.Decimal(0)
 
-    gymsRepository.items.push({
+    await gymsRepository.create({
       id: 'gym-01',
       title: 'JavaScript Gym',
       description: '',
@@ -59,7 +61,7 @@ describe('Check-in Use Case', () => {
         userLatitude: -27.2092052,
         userLongitude: -49.6401091,
       }),
-    ).rejects.toBeInstanceOf(Error)
+    ).rejects.toBeInstanceOf(MaxNumberOfCheckInsError)
 
   })
 
@@ -103,5 +105,5 @@ it('should not be able to check in on distant gym', async () => {
       userLatitude: -27.2092052,
       userLongitude: -49.6401091,
     }),
-  ).rejects.toBeInstanceOf(Error)
+  ).rejects.toBeInstanceOf(MaxDistanceError)
 })
